@@ -6,10 +6,8 @@ Includes scheduled call notifications and a simulated incoming call screen.
 ---
 
 ## 🚀 Features
-
-- Force-directed friend graph UI (Flutter + `flutter_force_directed_graph`)
-- Local notifications using `flutter_local_notifications`
-- Simulated incoming call screen with 10-minute timeout
+- Visualize connections
+- Call with random people in 10 o'clock
 - Timezone-aware notification scheduling
 
 ---
