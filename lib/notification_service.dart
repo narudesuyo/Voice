@@ -5,25 +5,31 @@ import 'package:intl/intl.dart';
 
 final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-Future<void> initializeNotifications(Function(String?) onNotificationTap) async {
-  print('通知初期化中...');
+Future<void> initializeNotifications(Function(String? payload) onNotificationTap) async {
+  print('🛠 通知初期化開始');
+
   final android = AndroidInitializationSettings('@mipmap/ic_launcher');
   final ios = DarwinInitializationSettings(
     requestAlertPermission: true,
-    requestBadgePermission: true,
     requestSoundPermission: true,
+    requestBadgePermission: true,
   );
+
   final settings = InitializationSettings(android: android, iOS: ios);
 
   await notificationsPlugin.initialize(
     settings,
-    onDidReceiveNotificationResponse: (details) {
-      print('🔔 通知がタップされた: ${details.payload}');
-      onNotificationTap(details.payload);
+    onDidReceiveNotificationResponse: (NotificationResponse details) {
+      final payload = details.payload;
+      print('🔔 通知がタップされた: $payload');
+      onNotificationTap(payload);
     },
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground, // ✅ 追加（iOSバックグラウンド対策）
   );
 
   tz.initializeTimeZones();
+
+  print('✅ 通知初期化完了');
 }
 
 // Future<void> scheduleCallNotification() async {
@@ -81,4 +87,8 @@ Future<void> scheduleCallNotification() async {
     payload: '/incoming',
     uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
   );
+}
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse details) {
+  print('📡 [BG] 通知タップ（バックグラウンド）: ${details.payload}');
 }
